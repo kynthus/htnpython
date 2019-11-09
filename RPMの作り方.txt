@@ -1,0 +1,260 @@
+$ pyvenv ~/mypython
+
+$ ls
+mypython
+
+$ cd mypython
+
+$ ls
+bin  include  lib  lib64  pyvenv.cfg  share
+
+$ . ~/mypython/bin/activate
+(mypython)$ which python3
+/root/mypython/bin/python3
+↑PATHが仮想環境のpython3コマンドを示す
+
+(mypython)$ ls -l ~/mypython/bin/python3
+lrwxrwxrwx 1 root root 9 Nov  3 08:54 /root/mypython/bin/python3 -> python3.5
+
+(mypython)$ pip3 list
+pip (8.1.1)
+pkg-resources (0.0.0)
+setuptools (20.7.0)
+↑Kafka Clientは入っていない
+
+(mypython)$ pip3 install pyspark
+Collecting pyspark
+  Downloading https://files.pythonhosted.org/packages/87/21/f05c186f4ddb01d15d0ddc36ef4b7e3cedbeb6412274a41f26b55a650ee5/pyspark-2.4.4.tar.gz (215.7MB)
+    100% |????????????????????????????????| 215.7MB 4.9kB/s
+Collecting py4j==0.10.7 (from pyspark)
+  Downloading https://files.pythonhosted.org/packages/e3/53/c737818eb9a7dc32a7cd4f1396e787bd94200c3997c72c1dbe028587bd76/py4j-0.10.7-py2.py3-none-any.whl (197kB)
+    100% |????????????????????????????????| 204kB 3.8MB/s
+Building wheels for collected packages: pyspark
+  Running setup.py bdist_wheel for pyspark ... done
+  Stored in directory: /root/.cache/pip/wheels/ab/09/4d/0d184230058e654eb1b04467dbc1292f00eaa186544604b471
+Successfully built pyspark
+Installing collected packages: py4j, pyspark
+Successfully installed py4j-0.10.7 pyspark-2.4.4
+↑試しに"仮想環境へ"PySparkをインストール
+
+$ deactivate
+↑deactivateで元のグローバル環境へ戻る
+
+$ which python3
+/usr/bin/python3
+↑python3が元通りグローバルへ
+
+$ pip3 list
+kafka (1.3.5)
+pip (8.1.1)
+pkg-resources (0.0.0)
+setuptools (20.7.0)
+↑Kafka Clientも存在する
+
+$ . ~/mypython/bin/activate
+↑仮想環境へ入りなおすには再度activateすれば良い
+
+(mypython)$ pip3 freeze > requirements.txt
+
+cat requirements.txt
+pkg-resources==0.0.0
+py4j==0.10.7
+pyspark==2.4.4
+↑PySparkの情報が入っている
+
+(mypython) $ deactivate
+
+$ pyvenv ~/newmypython
+
+$ cd ~/newmypython
+
+$ . ~/newmypython/bin/activate
+
+(newmypython) $ pip3 list
+pip (8.1.1)
+pkg-resources (0.0.0)
+setuptools (20.7.0)
+↑まだPySparkは入っていない
+
+(newmypython) $ pip3 install -r ~/mypython/requirements.txt
+Requirement already satisfied (use --upgrade to upgrade): pkg-resources==0.0.0 in ./lib/python3.5/site-packages (from -r /root/mypython/requirements.txt (line 1))
+Collecting py4j==0.10.7 (from -r /root/mypython/requirements.txt (line 2))
+  Using cached https://files.pythonhosted.org/packages/e3/53/c737818eb9a7dc32a7cd4f1396e787bd94200c3997c72c1dbe028587bd76/py4j-0.10.7-py2.py3-none-any.whl
+Collecting pyspark==2.4.4 (from -r /root/mypython/requirements.txt (line 3))
+Installing collected packages: py4j, pyspark
+Successfully installed py4j-0.10.7 pyspark-2.4.4
+↑既存の仮想環境からパッケージをインストールする
+  インターネットへ出ないので安全かつ高速
+
+
+
+～ さて、RPMを作ろう ～
+
+(newmypython) $ ls
+bin       include  lib64               pyvenv.cfg  requirements.txt  share
+htnhello  lib      pip-selfcheck.json  README.rst  setup.py
+↑こんな環境があったとする(READMEは.rstなので注意)
+
+(newmypython)$ python3 setup.py bdist_rpm
+/usr/lib/python3.5/distutils/dist.py:261: UserWarning: Unknown distribution option: 'long_description_content_type'
+  warnings.warn(msg)
+running bdist_rpm
+running egg_info
+creating htnhello.egg-info
+writing entry points to htnhello.egg-info/entry_points.txt
+writing dependency_links to htnhello.egg-info/dependency_links.txt
+writing htnhello.egg-info/PKG-INFO
+writing top-level names to htnhello.egg-info/top_level.txt
+writing manifest file 'htnhello.egg-info/SOURCES.txt'
+reading manifest file 'htnhello.egg-info/SOURCES.txt'
+writing manifest file 'htnhello.egg-info/SOURCES.txt'
+creating build
+creating build/bdist.linux-x86_64
+creating build/bdist.linux-x86_64/rpm
+creating build/bdist.linux-x86_64/rpm/SOURCES
+creating build/bdist.linux-x86_64/rpm/SPECS
+creating build/bdist.linux-x86_64/rpm/BUILD
+creating build/bdist.linux-x86_64/rpm/RPMS
+creating build/bdist.linux-x86_64/rpm/SRPMS
+writing 'build/bdist.linux-x86_64/rpm/SPECS/htnhello.spec'
+running sdist
+running check
+warning: check: missing meta-data: if 'author' supplied, 'author_email' must be supplied too
+
+creating htnhello-0.1.0
+creating htnhello-0.1.0/htnhello
+creating htnhello-0.1.0/htnhello.egg-info
+making hard links in htnhello-0.1.0...
+hard linking README.rst -> htnhello-0.1.0
+hard linking setup.py -> htnhello-0.1.0
+hard linking htnhello/__init__.py -> htnhello-0.1.0/htnhello
+hard linking htnhello/greet.py -> htnhello-0.1.0/htnhello
+hard linking htnhello.egg-info/PKG-INFO -> htnhello-0.1.0/htnhello.egg-info
+hard linking htnhello.egg-info/SOURCES.txt -> htnhello-0.1.0/htnhello.egg-info
+hard linking htnhello.egg-info/dependency_links.txt -> htnhello-0.1.0/htnhello.egg-info
+hard linking htnhello.egg-info/entry_points.txt -> htnhello-0.1.0/htnhello.egg-info
+hard linking htnhello.egg-info/top_level.txt -> htnhello-0.1.0/htnhello.egg-info
+Writing htnhello-0.1.0/setup.cfg
+creating dist
+Creating tar archive
+removing 'htnhello-0.1.0' (and everything under it)
+copying dist/htnhello-0.1.0.tar.gz -> build/bdist.linux-x86_64/rpm/SOURCES
+building RPMs
+rpmbuild -ba --define __python python3 --define _topdir /root/mypython/build/bdist.linux-x86_64/rpm --clean build/bdist.linux-x86_64/rpm/SPECS/htnhello.spec
+Executing(%prep): /bin/sh -e /var/tmp/rpm-tmp.hJGafY
++ umask 022
++ cd /root/mypython/build/bdist.linux-x86_64/rpm/BUILD
++ cd /root/mypython/build/bdist.linux-x86_64/rpm/BUILD
++ rm -rf htnhello-0.1.0
++ /bin/tar -xvvf -
++ /bin/gzip -dc /root/mypython/build/bdist.linux-x86_64/rpm/SOURCES/htnhello-0.1.0.tar.gz
+drwxr-xr-x root/root         0 2019-11-03 09:20 htnhello-0.1.0/
+-rw-r--r-- root/root       521 2019-11-03 09:19 htnhello-0.1.0/README.rst
+-rw-r--r-- root/root      1049 2019-11-03 09:20 htnhello-0.1.0/PKG-INFO
+-rw-r--r-- root/root       911 2019-11-03 09:20 htnhello-0.1.0/setup.py
+drwxr-xr-x root/root         0 2019-11-03 09:20 htnhello-0.1.0/htnhello.egg-info/
+-rw-r--r-- root/root       221 2019-11-03 09:20 htnhello-0.1.0/htnhello.egg-info/SOURCES.txt
+-rw-r--r-- root/root      1049 2019-11-03 09:20 htnhello-0.1.0/htnhello.egg-info/PKG-INFO
+-rw-r--r-- root/root         9 2019-11-03 09:20 htnhello-0.1.0/htnhello.egg-info/top_level.txt
+-rw-r--r-- root/root         1 2019-11-03 09:20 htnhello-0.1.0/htnhello.egg-info/dependency_links.txt
+-rw-r--r-- root/root        51 2019-11-03 09:20 htnhello-0.1.0/htnhello.egg-info/entry_points.txt
+-rw-r--r-- root/root        59 2019-11-03 09:20 htnhello-0.1.0/setup.cfg
+drwxr-xr-x root/root         0 2019-11-03 09:20 htnhello-0.1.0/htnhello/
+-rw-r--r-- root/root         0 2019-11-03 09:12 htnhello-0.1.0/htnhello/__init__.py
+-rw-r--r-- root/root       557 2019-11-03 09:12 htnhello-0.1.0/htnhello/greet.py
++ STATUS=0
++ [ 0 -ne 0 ]
++ cd htnhello-0.1.0
++ /bin/chmod -Rf a+rX,u+w,g-w,o-w .
++ exit 0
+Executing(%build): /bin/sh -e /var/tmp/rpm-tmp.TEHMW1
++ umask 022
++ cd /root/mypython/build/bdist.linux-x86_64/rpm/BUILD
++ cd htnhello-0.1.0
++ python3 setup.py build
+/usr/lib/python3.5/distutils/dist.py:261: UserWarning: Unknown distribution option: 'long_description_content_type'
+  warnings.warn(msg)
+running build
+running build_py
+creating build
+creating build/lib
+creating build/lib/htnhello
+copying htnhello/__init__.py -> build/lib/htnhello
+copying htnhello/greet.py -> build/lib/htnhello
++ exit 0
+Executing(%install): /bin/sh -e /var/tmp/rpm-tmp.w8fhA6
++ umask 022
++ cd /root/mypython/build/bdist.linux-x86_64/rpm/BUILD
++ cd htnhello-0.1.0
++ python3 setup.py install --single-version-externally-managed -O1 --root=/root/mypython/build/bdist.linux-x86_64/rpm/BUILDROOT/htnhello-0.1.0-1.x86_64 --record=INSTALLED_FILES
+/usr/lib/python3.5/distutils/dist.py:261: UserWarning: Unknown distribution option: 'long_description_content_type'
+  warnings.warn(msg)
+running install
+running build
+running build_py
+running install_lib
+creating /root/mypython/build/bdist.linux-x86_64/rpm/BUILDROOT/htnhello-0.1.0-1.x86_64
+creating /root/mypython/build/bdist.linux-x86_64/rpm/BUILDROOT/htnhello-0.1.0-1.x86_64/root
+creating /root/mypython/build/bdist.linux-x86_64/rpm/BUILDROOT/htnhello-0.1.0-1.x86_64/root/newmypython
+creating /root/mypython/build/bdist.linux-x86_64/rpm/BUILDROOT/htnhello-0.1.0-1.x86_64/root/newmypython/lib
+creating /root/mypython/build/bdist.linux-x86_64/rpm/BUILDROOT/htnhello-0.1.0-1.x86_64/root/newmypython/lib/python3.5
+creating /root/mypython/build/bdist.linux-x86_64/rpm/BUILDROOT/htnhello-0.1.0-1.x86_64/root/newmypython/lib/python3.5/site-packages
+creating /root/mypython/build/bdist.linux-x86_64/rpm/BUILDROOT/htnhello-0.1.0-1.x86_64/root/newmypython/lib/python3.5/site-packages/htnhello
+copying build/lib/htnhello/__init__.py -> /root/mypython/build/bdist.linux-x86_64/rpm/BUILDROOT/htnhello-0.1.0-1.x86_64/root/newmypython/lib/python3.5/site-packages/htnhello
+copying build/lib/htnhello/greet.py -> /root/mypython/build/bdist.linux-x86_64/rpm/BUILDROOT/htnhello-0.1.0-1.x86_64/root/newmypython/lib/python3.5/site-packages/htnhello
+byte-compiling /root/mypython/build/bdist.linux-x86_64/rpm/BUILDROOT/htnhello-0.1.0-1.x86_64/root/newmypython/lib/python3.5/site-packages/htnhello/__init__.py to __init__.cpython-35.pyc
+byte-compiling /root/mypython/build/bdist.linux-x86_64/rpm/BUILDROOT/htnhello-0.1.0-1.x86_64/root/newmypython/lib/python3.5/site-packages/htnhello/greet.py to greet.cpython-35.pyc
+writing byte-compilation script '/tmp/tmp6ekcy0tt.py'
+/root/newmypython/bin/python3 -O /tmp/tmp6ekcy0tt.py
+removing /tmp/tmp6ekcy0tt.py
+running install_egg_info
+running egg_info
+writing htnhello.egg-info/PKG-INFO
+writing top-level names to htnhello.egg-info/top_level.txt
+writing dependency_links to htnhello.egg-info/dependency_links.txt
+writing entry points to htnhello.egg-info/entry_points.txt
+reading manifest file 'htnhello.egg-info/SOURCES.txt'
+writing manifest file 'htnhello.egg-info/SOURCES.txt'
+Copying htnhello.egg-info to /root/mypython/build/bdist.linux-x86_64/rpm/BUILDROOT/htnhello-0.1.0-1.x86_64/root/newmypython/lib/python3.5/site-packages/htnhello-0.1.0.egg-info
+running install_scripts
+Installing htnhello script to /root/mypython/build/bdist.linux-x86_64/rpm/BUILDROOT/htnhello-0.1.0-1.x86_64/root/newmypython/bin
+writing list of installed files to 'INSTALLED_FILES'
++ /usr/lib/rpm/brp-compress
++ /usr/lib/rpm/brp-strip /usr/bin/strip
++ /usr/lib/rpm/brp-strip-static-archive /usr/bin/strip
++ /usr/lib/rpm/brp-strip-comment-note /usr/bin/strip /usr/bin/objdump
+Processing files: htnhello-0.1.0-1.noarch
+Provides: htnhello = 0.1.0-1
+Requires(rpmlib): rpmlib(CompressedFileNames) <= 3.0.4-1 rpmlib(PayloadFilesHavePrefix) <= 4.0-1
+Requires: /root/newmypython/bin/python3
+Checking for unpackaged file(s): /usr/lib/rpm/check-files /root/mypython/build/bdist.linux-x86_64/rpm/BUILDROOT/htnhello-0.1.0-1.x86_64
+Wrote: /root/mypython/build/bdist.linux-x86_64/rpm/SRPMS/htnhello-0.1.0-1.src.rpm
+Wrote: /root/mypython/build/bdist.linux-x86_64/rpm/RPMS/noarch/htnhello-0.1.0-1.noarch.rpm
+Executing(%clean): /bin/sh -e /var/tmp/rpm-tmp.ckyEXc
++ umask 022
++ cd /root/mypython/build/bdist.linux-x86_64/rpm/BUILD
++ cd htnhello-0.1.0
++ rm -rf /root/mypython/build/bdist.linux-x86_64/rpm/BUILDROOT/htnhello-0.1.0-1.x86_64
++ exit 0
+Executing(--clean): /bin/sh -e /var/tmp/rpm-tmp.BCcimj
++ umask 022
++ cd /root/mypython/build/bdist.linux-x86_64/rpm/BUILD
++ rm -rf htnhello-0.1.0
++ exit 0
+moving build/bdist.linux-x86_64/rpm/SRPMS/htnhello-0.1.0-1.src.rpm -> dist
+moving build/bdist.linux-x86_64/rpm/RPMS/noarch/htnhello-0.1.0-1.noarch.rpm -> dist
+
+(newmypython) $ ls -l
+total 28
+-rw-r--r-- 1 root root 9645 Nov  3 09:20 htnhello-0.1.0-1.noarch.rpm
+-rw-r--r-- 1 root root 8607 Nov  3 09:20 htnhello-0.1.0-1.src.rpm
+-rw-r--r-- 1 root root 1676 Nov  3 09:20 htnhello-0.1.0.tar.gz
+↑.noarch.rpm
+
+(newmypython) $ rpm -ivh htnhello-0.1.0-1.src.rpm
+rpm: RPM should not be used directly install RPM packages, use Alien instead!
+rpm: However assuming you know what you are doing...
+Updating / installing...
+   1:htnhello-0.1.0-1                 ################################# [100%]
+
+★なぜかrpmが無理だった。.tar.gzはいけたが★

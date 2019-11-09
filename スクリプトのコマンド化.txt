@@ -1,0 +1,19 @@
+～ Windowsの.exeの場合 ～
+
+1.	「pip install pyinstaller」
+2.	mainを含むソースを作成し、
+	「pyinstaller <Pythonソース> --onefile」
+	※--onefileがあれば.exeに全てが載る
+	  なしの場合はDLLなどが必要
+3.	「pyinstaller 生成した.specファイル」
+	これでDLLや.exeが作られる
+4.	基本的に「dist」下のものを配る
+5.	全部載せの場合は.exeだけを配ればOK
+	DLLも入っている場合はどこかにフォルダを掘り
+	.exeへのショートカットを作る
+
+
+
+～ UNIX系の場合 ～
+
+★同じ事をLinuxやMac上で行えば良い。それだけ

@@ -1,0 +1,7 @@
+1.	Pythonモジュールを作成
+2.	mkdir mymodule
+3.	mv rootpack mymodule
+4.	rm mymodule.zip
+5.	cd mymodule
+6.	zip -r * ../mymodule.zip
+7.	あとはspark-submitの--py-filesで渡せばよい
