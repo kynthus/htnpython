@@ -71,7 +71,7 @@ def q08():
     偶数の場合は'B'を数値の回数分連ねた文字列のリストを生成してください。
     ['1A', '3A', 'BBBB', 'BBBBBB', '7A', '9A']
     """
-    print(['%dA' % n if n % 2 != 0 else 'B' * n for n in nlist if n > 0])
+    print(['{:d}A'.format(n) if n % 2 != 0 else 'B' * n for n in nlist if n > 0])
 
 
 # 以下のような数値と文字のリストがあります。

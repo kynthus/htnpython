@@ -14,11 +14,11 @@ def q01():
     num1 = int(input('整数値1：'))
     num2 = int(input('整数値2：'))
 
-    print('num1 + num2 = %d' % (num1 + num2))
-    print('num1 - num2 = %d' % (num1 - num2))
-    print('num1 * num2 = %d' % (num1 * num2))
-    print('num1 / num2 = %f' % (num1 / num2))
-    print('num1 %% num2 = %d' % (num1 % num2))
+    print('num1 + num2 = {:d}'.format(num1 + num2))
+    print('num1 - num2 = {:d}'.format(num1 - num2))
+    print('num1 * num2 = {:d}'.format(num1 * num2))
+    print('num1 / num2 = {:f}'.format(num1 / num2))
+    print('num1 % num2 = {:d}'.format(num1 % num2))
 
 
 def q02():
@@ -32,15 +32,15 @@ def q02():
     total = num1 + num2 + num3
     average = total / 3
 
-    print('3つの整数値の合計：%d' % total)
-    print('3つの整数値の平均：%f' % average)
+    print('3つの整数値の合計：{:d}'.format(total))
+    print('3つの整数値の平均：{:f}'.format(average))
 
     # 別解
     total2 = sum([num1, num2, num3])
     average2 = numpy.average([num1, num2, num3])
 
-    print('3つの整数値の合計：%d' % total2)
-    print('3つの整数値の平均：%f' % average2)
+    print('3つの整数値の合計：{:d}'.format(total2))
+    print('3つの整数値の平均：{:f}'.format(average2))
 
 
 def q03():
@@ -49,8 +49,8 @@ def q03():
     """
     radius = float(input('半径：'))
 
-    print('円周の長さ：%f' % (2 * math.pi * radius))
-    print('円の面積  ：%f' % (math.pi * radius ** 2))
+    print('円周の長さ：{:f}'.format(2 * math.pi * radius))
+    print('円の面積  ：{:f}'.format(math.pi * radius ** 2))
 
 
 def q04():
@@ -74,7 +74,7 @@ def q05():
     num2 = int(input('整数2：'))
 
     diff = num2 - num1 if num1 < num2 else num1 - num2
-    print('2つの整数値の差は%d' % diff)
+    print('2つの整数値の差は{:d}'.format(diff))
 
 
 def q06():
@@ -98,7 +98,7 @@ def q07():
         if line == 'q':
             break
 
-        print('入力された文字列[%s]' % line)
+        print('入力された文字列[{}]'.format(line))
 
 
 def q08():
@@ -107,7 +107,7 @@ def q08():
     """
     n = int(input('n：'))
 
-    print('2^%d = %d' % (n, 2 ** n))
+    print('2^{:d} = {:d}'.format(n, 2 ** n))
 
 
 def q09():
