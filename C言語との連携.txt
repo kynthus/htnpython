@@ -1,0 +1,10 @@
+1.	C言語でソースを書く
+	※PyInit_○○○()の○○○は必ずモジュール名にすること！
+
+2.	setup.pyを書く(ついでにsetup.cfgも)
+
+3.	テスト用のPythonソースを書く(呼出側)
+
+4.	python setup.py bdist_wheel
+
+5.	python setup.py install
