@@ -1,0 +1,255 @@
+～ インストールすべきソフトウェア ～
+
+「Oracle VM VirtualBox 6.0」
+	HP：https://www.virtualbox.org/wiki/Downloads
+	※ページ中部の「Windows hosts」をクリックしてダウンロード
+
+「CentOS 7(64bit)」のISOイメージ(Minimalで結構)
+	HP：https://mirrors.cat.net/centos/7.7.1908/isos/x86_64/
+	※「CentOS-7-x86_64-Minimal-1908.iso」をクリックしてダウンロード
+	-> ただしrpmやyumにはブリッジ接続が必要
+		-> jdkやdstat、PostgreSQLやJDBCのインストールが不便...
+
+★Ubuntuの場合
+	HP：http://releases.ubuntu.com/16.04/
+	※「64-bit PC (AMD64) server install image」をクリックしてダウンロード
+
+「WinSCP」もついでに入れとく
+
+
+
+～ CentOSをVMとして作成 ～
+
+1. VMを新規に作成
+	名前	CentOS 7.6(1810) Python
+	OS	Other Linux (64-bit)
+	メインメモリ	16384MB
+	ストレージ	VMDK(256.00GB)
+
+2. 作成したVMの「設定」を変更
+	ディスプレイのGraphics Controllerに「VBoxVGA」を指定する
+	ネットワークに「ホストオンリーアダプタ」を指定する
+
+3. ホストネットワークマネージャでIPを確認しておく
+	IPは被らないように1ずつ足していくように！
+
+4. VMを起動しCentOSをセットアップ
+	"空"になっているものにISOイメージを入れられる
+	言語は英語でもいいが、キーボードは日本語！
+	※rootのパスワードだけ設定しておくこと
+	★Ubuntuの場合★
+		1. 言語にEnglish
+		2. キーボードはJapanese
+		あとはよしなにすれば良い
+
+5. 設定したらCentOSを再起動する
+	nmtuiでIPアドレスを設定
+	（大体は192.168.11.xxx/24とかね）
+	IPv6は無視するようにする
+	auto connectionをonにしておく
+	ゲートウェイ192.168.11."1"とか(一番右が1になる)
+	DNSアドレスは8.8.8.8と8.8.4.4を指定(GoogleのパブリックDNSらしい)
+	※設定したIPが間違った場合はSSH接続時に少し固まるので疑うと良い※
+
+6. 念のためsshでつなげるか試す
+	ここでOKならtera termから接続可能
+	★Ubuntuの場合★
+	OpenSSHをインストール「apt install openssh-server」
+	「/etc/ssh/sshd_config」を編集する
+	「PermitRootLogin yes」を記述
+	「PasswordAuthentication yes」をコメントアウト
+	「/etc/init.d/ssh restart」を投入
+	これでOK
+
+★固定IPアドレスの設定★
+	Ubuntu 16.04までは……「/etc/network/interfaces」を編集
+	Ubuntu 18.04以降は……「/etc/netplan/50-cloud-init.yaml」を編集
+	
+	※以下を参考にすること
+	# This file describes the network interfaces available on your system
+	# and how to activate them. For more information, see interfaces(5).
+
+	source /etc/network/interfaces.d/*
+
+	# The loopback network interface
+	auto lo
+	iface lo inet loopback
+
+	# The primary network interface
+	auto enp0s3
+	# iface enp0s3 inet dhcp
+	iface enp0s3 inet static
+	address 192.168.11.6
+	netmask 255.255.255.0
+	gateway 192.168.11.1
+	dns-nameservers 192.168.11.1
+
+	# The hostonly network interface
+	auto enp0s8
+	iface enp0s8 inet static
+	address 192.168.56.102
+	netmask 255.255.255.0
+
+
+
+～ Pythonのインストール ～
+
+1. まずはIUSコミュニティをyumへ登録する
+	yum install https://centos7.iuscommunity.org/ius-release.rpm
+
+2. Python 3系をインストール
+	yum install python36 ※CentOS 7.6では3.6が最新
+
+3. gccをインストール
+	yum install gcc
+
+4. g++もついでにインストール
+	yum install gcc-c++
+
+5. Python Development Toolをインストール(※注意：3.6用)
+	yum install python36-devel
+
+★ここから先は適宜venvで行うこと
+
+
+
+～ Numbaの実践 ～
+
+1. インストール
+	pip install numba
+
+2. あとはimport numbaからnumba.jitをデコレータとして使う
+	ただし、numpyでないとあまり効果無さげ
+
+
+
+～ C言語の開発環境整備 ～
+
+1. Pythonの仮想環境を用意
+	python3 -m venv ~/myclang
+
+2. 仮想環境をアクティベート
+	. ~/myclang/bin/activate
+
+3. パスを確認
+	which python3
+	/root/myclang/bin/python3
+
+4. 念のためpython3のリンク先が正しいか確認
+	ls -l ~/myclang/bin/python3
+	lrwxrwxrwx. 1 root root 16 Dec 19 08:43 /root/myclang/bin/python3 -> /usr/bin/python3
+
+5. bdist_wheelを使用するため、pipでインストール
+	pip3 install wheel
+
+6. C言語モジュールをビルド
+	python3 setup.py bdist_wheel
+
+7. C言語モジュールをインストール
+	python3 setup.py install
+
+8. 動くかテストをする
+	python3 test_hello.py
+
+★注意点★
+C APIの場合、必ずPyObject *が所有参照か借用参照か意識すること！
+あと関数受け渡し時に"盗まれる"か否かも要注意
+下手に解放すると変なタイミングでSegmentation Faultしたりで大変……
+
+
+
+～ C++(Boost)の開発環境整備 ～
+
+1. Boostをダウンロード
+	https://www.boost.org/users/download/
+	上記サイトから最新版Boostを入手する(UNIX系ならtar.gz)
+
+2. 「/usr/local/src」あたりに置いて解等
+	gunzip boost_○_○○_○.tar.gz
+	tar -xvf boost_○_○○_○.tar
+
+3. BoostにおけるPython開発用インクルードパスを設定
+	vi ~/.bash_profile
+	export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:$HOME/boost_○_○○_○/:/usr/include/python3.6m/
+
+4. bootstrapを実行する
+	./bootstrap.sh --prefix=/usr/local/ --with-libraries=python --with-python=python3 --with-python-version=3.6
+
+5. b2でビルド
+	./b2 install --with-python
+	※結構時間かかる
+
+6. Boostへのライブラリパスを通す
+	vi ~/.bash_profile
+	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+
+7. setup.pyへinclude_dirsを指定する
+	まぁ大体「/usr/local/include/boost」だけど
+	さらにlibrary_dirsとlibrariesの指定も忘れずに
+
+8. あとはC言語同様、bdist_wheelすれば良い
+
+
+
+～ C++(Boost.NumPy)の開発環境整備 ～
+
+1. NumPyの基本開発ツールをインストール
+	yum install numpy
+
+2. NumPyのバージョン特化版開発ツールをインストール
+	yum install python36-numpy
+
+3. もう一度Boostをビルドしなおす
+	./b2 install --with-python
+
+4. setup.pyのlibrariesへ「boost_numpy」を指定する
+
+5. bdist_wheelする
+
+
+
+～ Ctypesセットアップ ～
+
+1. 特にセットアップはいらない
+	C/C++開発環境さえあればOK
+
+2. 無駄に開発せずとも良くsetup.pyも不要で簡単だが
+	データ型が制限されるのがデメリット
+
+
+
+～ Cythonセットアップ ～
+
+1. インストール
+	pip install Cython
+
+2. あとは.pyxを作れば良い。C拡張の自動生成が助かる
+	コンパイル自体はbdist_wheelで変わりなし
+
+
+
+～ SWIGセットアップ ～
+
+1. インストール
+	yum install swig
+
+2. 色々と作成する
+	「.i」ファイルをはじめ、「.c」と「.h」も必要
+	C++の場合はラップソースは「.cxx」
+
+3. setup.pyに書くモジュール名はアンダーバー('_')はじまり
+	これ結構ハマったので要注意
+	さらにstd::vectorなどSTL使う場合は.iに専用の記述必要
+
+4. 書き終わってしまえばbdist_wheelすれば良い
+
+
+
+★★★ 参照カウントをしくると…… ★★★
+
+以下のようなログが出てくる
+
+-------------------------------------------------
+*** Reference count error detected:
+an attempt was made to deallocate 12 (d) ***
+-------------------------------------------------
