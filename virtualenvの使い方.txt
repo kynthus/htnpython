@@ -1,0 +1,60 @@
+[root@localhost ~]# virtualenv ~/mypython
+  No LICENSE.txt / LICENSE found in source
+New python executable in /root/mypython/bin/python2
+Also creating executable in /root/mypython/bin/python
+Installing setuptools, pip, wheel...
+done.
+
+[root@localhost ~]# ls
+anaconda-ks.cfg  myclang  mycpp  myctypes  mycython  mynumba  mypython  myswig
+
+[root@localhost ~]# cd mypython
+
+[root@localhost mypython]# ls
+bin  include  lib  lib64
+
+[root@localhost mypython]# . bin/activate
+
+(mypython) [root@localhost mypython]# which python
+/root/mypython/bin/python
+
+(mypython) [root@localhost mypython]# ls -la /root/mypython/bin/python
+lrwxrwxrwx. 1 root root 7 Jan  6 07:28 /root/mypython/bin/python -> python2
+
+(mypython) [root@localhost mypython]# pip list
+Package    Version
+---------- -------
+pip        19.3.1
+setuptools 44.0.0
+wheel      0.33.6
+
+(mypython) [root@localhost mypython]# pip install pyspark
+Collecting pyspark
+  Downloading https://files.pythonhosted.org/packages/87/21/f05c186f4ddb01d15d0ddc36ef4b7e3cedbeb6412274a41f26b55a650ee5/pyspark-2.4.4.tar.gz (215.7MB)
+     |????????????????????????????????| 215.7MB 66kB/s
+Collecting py4j==0.10.7
+  Downloading https://files.pythonhosted.org/packages/e3/53/c737818eb9a7dc32a7cd4f1396e787bd94200c3997c72c1dbe028587bd76/py4j-0.10.7-py2.py3-none-any.whl (197kB)
+     |????????????????????????????????| 204kB 9.8MB/s
+Building wheels for collected packages: pyspark
+  Building wheel for pyspark (setup.py) ... done
+  Created wheel for pyspark: filename=pyspark-2.4.4-py2.py3-none-any.whl size=216130387 sha256=2d0b2926fc8f0141b6264ce40c7ea9a2e4144ce78c6960ad0b4c9e407e429dc2
+  Stored in directory: /root/.cache/pip/wheels/ab/09/4d/0d184230058e654eb1b04467dbc1292f00eaa186544604b471
+Successfully built pyspark
+Installing collected packages: py4j, pyspark
+Successfully installed py4j-0.10.7 pyspark-2.4.4
+
+(mypython) [root@localhost mypython]# pip list
+Package    Version
+---------- -------
+pip        19.3.1
+py4j       0.10.7
+pyspark    2.4.4
+setuptools 44.0.0
+wheel      0.33.6
+
+(mypython) [root@localhost mypython]# deactivate
+
+[root@localhost mypython]# pip list
+pip (8.1.2)
+setuptools (0.9.8)
+wheel (0.33.6)

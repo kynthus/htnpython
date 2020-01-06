@@ -1,0 +1,57 @@
+(myinst) [root@localhost src]# python setup.py bdist_wheel
+running bdist_wheel
+running build
+running build_py
+creating build
+creating build/lib
+creating build/lib/mytest
+copying mytest/__init__.py -> build/lib/mytest
+copying mytest/hello.py -> build/lib/mytest
+installing to build/bdist.linux-x86_64/wheel
+running install
+running install_lib
+creating build/bdist.linux-x86_64
+creating build/bdist.linux-x86_64/wheel
+creating build/bdist.linux-x86_64/wheel/mytest
+copying build/lib/mytest/__init__.py -> build/bdist.linux-x86_64/wheel/mytest
+copying build/lib/mytest/hello.py -> build/bdist.linux-x86_64/wheel/mytest
+running install_egg_info
+running egg_info
+creating mytest.egg-info
+writing mytest.egg-info/PKG-INFO
+writing top-level names to mytest.egg-info/top_level.txt
+writing dependency_links to mytest.egg-info/dependency_links.txt
+writing manifest file 'mytest.egg-info/SOURCES.txt'
+reading manifest file 'mytest.egg-info/SOURCES.txt'
+writing manifest file 'mytest.egg-info/SOURCES.txt'
+Copying mytest.egg-info to build/bdist.linux-x86_64/wheel/mytest-0.0.0-py2.7.egg-info
+running install_scripts
+creating build/bdist.linux-x86_64/wheel/mytest-0.0.0.dist-info/WHEEL
+creating 'dist/mytest-0.0.0-py2-none-any.whl' and adding 'build/bdist.linux-x86_64/wheel' to it
+adding 'mytest/__init__.py'
+adding 'mytest/hello.py'
+adding 'mytest-0.0.0.dist-info/METADATA'
+adding 'mytest-0.0.0.dist-info/WHEEL'
+adding 'mytest-0.0.0.dist-info/top_level.txt'
+adding 'mytest-0.0.0.dist-info/RECORD'
+removing build/bdist.linux-x86_64/wheel
+
+(myinst) [root@localhost src]# ls dist
+mytest-0.0.0-py2-none-any.whl
+
+(myinst) [root@localhost src]# pip install ./dist/mytest-0.0.0-py2-none-any.whl
+DEPRECATION: Python 2.7 will reach the end of its life on January 1st, 2020. Please upgrade your Python as Python 2.7 won't be maintained after that date. A future version of pip will drop support for Python 2.7. More details about Python 2 support in pip, can be found at https://pip.pypa.io/en/latest/development/release-process/#python-2-support
+Processing ./dist/mytest-0.0.0-py2-none-any.whl
+Installing collected packages: mytest
+Successfully installed mytest-0.0.0
+
+★あるいはpython setup.py install
+
+(myinst) [root@localhost src]# python
+Python 2.7.5 (default, Aug  7 2019, 00:51:29)
+[GCC 4.8.5 20150623 (Red Hat 4.8.5-39)] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import mytest
+>>> import mytest.hello
+>>> mytest.hello.hello()
+こんにちは世界

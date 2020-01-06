@@ -1,0 +1,57 @@
+(myinst) [root@localhost src]# python setup.py bdist_egg
+running bdist_egg
+running egg_info
+creating mytest.egg-info
+writing mytest.egg-info/PKG-INFO
+writing top-level names to mytest.egg-info/top_level.txt
+writing dependency_links to mytest.egg-info/dependency_links.txt
+writing manifest file 'mytest.egg-info/SOURCES.txt'
+reading manifest file 'mytest.egg-info/SOURCES.txt'
+writing manifest file 'mytest.egg-info/SOURCES.txt'
+installing library code to build/bdist.linux-x86_64/egg
+running install_lib
+running build_py
+creating build
+creating build/lib
+creating build/lib/mytest
+copying mytest/__init__.py -> build/lib/mytest
+copying mytest/hello.py -> build/lib/mytest
+creating build/bdist.linux-x86_64
+creating build/bdist.linux-x86_64/egg
+creating build/bdist.linux-x86_64/egg/mytest
+copying build/lib/mytest/__init__.py -> build/bdist.linux-x86_64/egg/mytest
+copying build/lib/mytest/hello.py -> build/bdist.linux-x86_64/egg/mytest
+byte-compiling build/bdist.linux-x86_64/egg/mytest/__init__.py to __init__.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mytest/hello.py to hello.pyc
+creating build/bdist.linux-x86_64/egg/EGG-INFO
+copying mytest.egg-info/PKG-INFO -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying mytest.egg-info/SOURCES.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying mytest.egg-info/dependency_links.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying mytest.egg-info/top_level.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+zip_safe flag not set; analyzing archive contents...
+creating dist
+creating 'dist/mytest-0.0.0-py2.7.egg' and adding 'build/bdist.linux-x86_64/egg' to it
+removing 'build/bdist.linux-x86_64/egg' (and everything under it)
+
+
+
+(myinst) [root@localhost src]# easy_install dist/mytest-0.0.0-py2.7.egg
+WARNING: The easy_install command is deprecated and will be removed in a future version.
+Processing mytest-0.0.0-py2.7.egg
+Copying mytest-0.0.0-py2.7.egg to /root/myinst/lib/python2.7/site-packages
+Adding mytest 0.0.0 to easy-install.pth file
+
+Installed /root/myinst/lib/python2.7/site-packages/mytest-0.0.0-py2.7.egg
+Processing dependencies for mytest==0.0.0
+Finished processing dependencies for mytest==0.0.0
+
+
+
+(myinst) [root@localhost src]# python
+Python 2.7.5 (default, Aug  7 2019, 00:51:29)
+[GCC 4.8.5 20150623 (Red Hat 4.8.5-39)] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import mytest.hello
+>>> mytest.hello.hello()
+こんにちは世界
+>>> quit()
