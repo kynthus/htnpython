@@ -17,6 +17,10 @@
 3.	bdist_wininstで配布
 	「bdist_wininst」で作成、出来上がった.exeを起動すれば良い
 
+4.	bdist_msiの手順
+	pip install cx_Freeze
+	python setup.py bdist_msi(ただし、setup.pyを適切に設定すること)
+
 ★.whlはプラットフォームが違うとダメなようだ
 ★さらにPyPIはきちんとv2,v3系で作成しないといけない
   もう2020年でサポート終わるから、2系は切りたいとこだ……

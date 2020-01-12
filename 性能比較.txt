@@ -20,3 +20,38 @@ Python：time = 12.413759708404541(ms)
 
 メインメモリー：4GB
 CPU数：1
+
+
+
+～ 非NumPyのNumba ～
+
+$ python numba_list.py
+/root/mynumba/lib64/python3.6/site-packages/numba/ir_utils.py:1969: NumbaPendingDeprecationWarning:
+Encountered the use of a type that is scheduled for deprecation: type 'reflected list' found for argument 'data' of function 'numba_bubble_sort'.
+
+For more information visit http://numba.pydata.org/numba-doc/latest/reference/deprecation.html#deprecation-of-reflection-for-list-and-set-types
+
+File "numba_list.py", line 21:
+@numba.jit
+def numba_bubble_sort(data):
+^
+
+  warnings.warn(NumbaPendingDeprecationWarning(msg, loc=loc))
+time = 51.02255177497864(ms)
+time = 14.462369203567505(ms)
+
+
+
+～ jitやnjitのオプション ～
+
+・jit(nopython=True)で最適化不可処理を洗い出せる
+  njitはこれのエイリアス
+・parallel=Trueには基本すれば良い
+・numba.prange()は大量ループに向く
+
+
+
+～ 型定義の無いCythonの場合 ～
+
+Python：time = 13.97195816040039(ms)
+Cython：time = 6.639142990112305(ms)
