@@ -1,0 +1,10 @@
+1. CFFIのインストール
+	pip install cffi
+
+2. Cソースの作成
+	「.c」のみでよい
+	あとはMakefileで.so作ればよい
+
+3. Python側ソース作成
+	cdef()のcsourceへ'extern ...'でプロトタイプ宣言する
+	これが面倒くさい

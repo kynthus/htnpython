@@ -20,6 +20,7 @@
 4.	bdist_msiの手順
 	pip install cx_Freeze
 	python setup.py bdist_msi(ただし、setup.pyを適切に設定すること)
+	・mytest-0.0.0-amd64.msiが出来上がる
 
 ★.whlはプラットフォームが違うとダメなようだ
 ★さらにPyPIはきちんとv2,v3系で作成しないといけない
