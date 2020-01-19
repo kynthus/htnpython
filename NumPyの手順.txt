@@ -1,0 +1,59 @@
+C-APIでNumPyをセットアップするまで
+
+1. まずはC-APIのセットアップまでを終える
+
+2. NumPy基本開発ツールをインストール
+	yum install numpy
+
+3. あとPython側のnumpyも忘れずに
+	pip install numpy
+
+★C-APIでNumPyを使うだけならこれだけでOK★
+
+
+
+4. Boostをダウンロード
+	https://www.boost.org/users/download/
+	上記サイトから最新版Boostを入手する(UNIX系ならtar.gz)
+
+5. 「/usr/local/src」あたりに置いて解等
+	gunzip boost_○_○○_○.tar.gz
+	tar -xvf boost_○_○○_○.tar
+
+6. BoostにおけるPython開発用インクルードパスを設定
+	vi ~/.bash_profile
+	export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:$HOME/boost_○_○○_○/:/usr/include/python3.6m/
+	※これがないとb2でのビルド時にPythonのライブラリが見つからないといわれる
+
+7. bootstrapを実行する
+	./bootstrap.sh --prefix=/usr/local/ --with-libraries=python --with-python=python3 --with-python-version=3.6
+
+8. b2でビルド
+	./b2 install --with-python
+
+6. Boostへのライブラリパスを通す
+	vi ~/.bash_profile
+	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+
+10. setup.pyへライブラリを指定する
+	boost_pythonの指定を忘れずに
+	ちなみに「/usr/local/」以外のincludeやlibを展開した場合は
+	インクルードパスとライブラリパスを自前で指定しないとダメ
+
+★ここまででBoost.Pythonは完了★
+
+
+
+11. まずはIUSコミュニティをyumへ登録する
+	yum install https://centos7.iuscommunity.org/ius-release.rpm
+	※これをやってないとpython36-numpyが見つからないといわれる
+
+12. yum install python36-numpy
+
+13. もう一度Boostをビルドしなおす
+	./b2 install --with-python
+	↑今度は「boost_numpy」もビルドされるようになる
+
+14. setup.pyのlibrariesへ「boost_numpy」を指定する
+
+★これでBoost.NumPyまで完了★
