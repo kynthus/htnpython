@@ -1,0 +1,35 @@
+TAC				← TAC側がアクセスできるようにするには「setenv.sh」へ例のJVMオプションを入れる
+VisualSVN		← 別にStudioの「3.」でやってんだからいいんでね？
+Artifact Repo	← 「Administration」->「System」->「HTTP」->「HTTP/HTTPS Proxy」がある
+	★もしかして2系と3系で違う？
+JobServer		← OUTがないからいいんじゃないの？
+AMCのDB			← 
+
+Catalog
+プロキシ設定】
+
+ご利用のPCがインターネットに接続する際にプロキシサーバーを経由しなければならない場合、以下の設定をする必要があります。
+
+「TalendDataCatalog\conf\conf.properties」をテキストエディターで開きます。
+「M_JAVA_OPTIONS」を有効化し、Javaのオプションにプロキシ設定を追加します。
+ユーザー・パスワード無しの例
+M_JAVA_OPTIONS=-Dhttp.proxyHost=<Proxyサーバーホスト> -Dhttp.proxyPort=<Proxyサーバーポート> -Dhttps.proxyHost=<Proxyサーバーホスト> -Dhttps.proxyPort=<Proxyサーバーポート>
+ユーザー・パスワード有りの例
+M_JAVA_OPTIONS=-Dhttp.proxyHost=<Proxyサーバーホスト> -Dhttp.proxyPort=<Proxyサーバーポート> -Dhttp.proxyUser=<ユーザー> -Dhttp.proxyPassword=<パスワード> -Dhttps.proxyHost=<Proxyサーバーホスト> -Dhttps.proxyPort=<Proxyサーバーポート> -Dhttps.proxyUser=<ユーザー> -Dhttps.proxyPassword=<パスワード>
+設定を反映させるため、TDCを再起動します。
+
+
+
+
+Tomcatサーバーを停止します。
+<TomcatPath>\binに移動し、setenv.batファイルを編集します。このファイルが存在しない場合は作成します。
+次の行を追加し、設定に一致するようにパラメーターを変更します。
+[Tomcat Proxy Property]
+-Dhttp.proxySet=true
+-Dhttp.proxyHost=proxy.server.com # Specify the host name or IP address of your HTTP proxy server. If your proxy uses an HTTPS host name, use Dhttp.proxyHost=https.
+-Dhttp.proxyPort=YourHttpProxyPort # Specify the port number of your proxy server.
+-Dhttp.nonProxyHost="localhost|host.mydomain.com|192.168.0" # Specify a list of hosts separated by "|" that do not require access through your proxy server.
+-DsocksProxyHost=YourSocksProxyHost # Specify the host name or IP address of your SOCKS proxy server. 
+-DsocksProxyPort=YourSocksProxyPort # Specify the port number of your SOCKS proxy server.
+プロキシ設定については、https://docs.oracle.com/javase/8/docs/technotes/guides/net/proxies.htmlを参照してください。
+Tomcatサーバーを再起動します。
