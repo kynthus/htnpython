@@ -17,7 +17,7 @@ final case class MyRecord[Key, Value]
 
 object MyRecord extends AnyRef {
 
-  def apply(node: ObjectNode, count: Int):
+  def apply(node: ObjectNode):
   MyRecord[String, String] = this (
     node.get("key").asText(),
     node.get("value").asText(),
@@ -37,8 +37,9 @@ val consumer: SourceFunction[ObjectNode] = new FlinkKafkaConsumer(
 )
 
 senv.addSource(consumer).
-  map(MyRecord(_, 1)).
-  countWindowAll(5L).
+  map(MyRecord(_)).
+  keyBy("value").
+  countWindow(5L).
   sum("valueLen").
   map(_.valueLen).
   print()
