@@ -1,0 +1,41 @@
+# Debezium/Postgresのコンテナ作成
+docker run --env POSTGRES_PASSWORD='Rootpwd01!' --name postgres --publish 5000:5432 debezium/postgres
+docker run --interactive --tty --name zookeeper --publish 2181:2181 --publish 2888:2888 --publish 3888:3888 debezium/zookeeper
+docker run --interactive --tty --name kafka --publish 9092:9092 --link zookeeper:zookeeper debezium/kafka
+
+
+# Kafkaコネクタ用のコンテナ作成
+docker run --interactive --tty --name connect --publish 8083:8083 --env GROUP_ID=1 --env CONFIG_STORAGE_TOPIC=my-connect-configs --env OFFSET_STORAGE_TOPIC=my-connect-offsets --env ADVERTISED_HOST_NAME=$(echo $DOCKER_HOST | cut -f3 -d/' | cut -f1 -d':') --link zookeeper:zookeeper --link postgres:postgres --link kafka:kafka debezium/connect
+
+
+# PostgreSQLへテーブルを作成&データを挿入
+psql -h localhost -p 5000 -U postgres
+CREATE DATABASE inventory;
+\c inventory
+CREATE TABLE dumb_table(id SERIAL PRIMARY KEY, name VARCHAR);
+
+
+# DebeziumへPostgres用のコネクタを登録
+curl -X POST -H "Accept:application/json" -H "Content-Type:application/json" localhost:8083/connectors/ -d '
+{
+  "name": "inventory-connector",
+  "config": {
+  "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+  "tasks.max": "1",
+  "database.hostname": "postgres",
+  "database.port": "5432",
+  "database.user": "postgres",
+  "database.password": "Rootpwd01!",
+  "database.dbname" : "inventory",
+  "database.server.name": "dbserver1",
+  "database.whitelist": "inventory",
+  "database.history.kafka.bootstrap.servers": "localhost:9092",
+  "database.history.kafka.topic": "schema-changes.inventory"
+  }
+}'
+
+curl -X GET -H 'Accept:application/json' localhost:8083/connectors/inventory-connector
+
+
+# Kafka Consumerより監視
+docker run  --interactive --tty --name watcher --rm --link zookeeper:zookeeper --link kafka:kafka debezium/kafka watch-topic -a -k dbserver1.public.dumb_table
