@@ -1,0 +1,164 @@
+InfluxDBインストール
+1. curl -O https://dl.influxdata.com/influxdb/releases/influxdb-1.8.0.x86_64.rpm
+2. yum install -y influxdb-1.8.0.x86_64.rpm
+3. systemctl start influxdb
+   systemctl enable influxdb
+   systemctl status influxdb
+4. CREATE DATABASE test
+   SHOW DATABASES
+   INSERT student,name=Tom money=12345
+   SELECT * FROM student
+
+
+
+Goインストール
+1. cd /opt/
+2. curl -O https://dl.google.com/go/go1.14.4.linux-amd64.tar.gz
+3. gunzip go1.14.4.linux-amd64.tar.gz
+4. tar -xvf go1.14.4.linux-amd64.tar
+5. vi ~/.bash_profile
+
+※GOROOT, GOPATHは必ず設定すること!
+GOROOT=/opt/go
+GOPATH=$HOME/go
+PATH=$PATH:$GOROOT/bin
+
+export GOROOT GOPATH PATH
+
+※加えて、pg_configにもパスを通す必要アリ!
+PATH=$PATH:/usr/pgsql-10/bin
+
+export PATH
+
+6. source ~/.bash_profile
+7. go version
+
+package main
+
+import "fmt"
+
+func main() {
+  fmt.Printf("Hello, World.\n")
+}
+
+8. go build hello.go
+   ./hello
+
+
+
+Influx FDWインストール
+★なぜかPostgreSQL 12はmake失敗する。
+  公式には12サポートしているとあるが……
+  あと「postgresql○○-devel」もインストールしておくこと！
+1. cd ~
+2. yum install -y git
+3. go get github.com/influxdata/influxdb1-client/v2
+4. git clone https://github.com/pgspider/influxdb_fdw.git
+5. cd influxdb_fdw
+6. make USE_PGXS=1 with_llvm=no
+7. make install USE_PGXS=1 with_llvm=no
+8. su - postgres
+9. psql
+10. CREATE EXTENSION influxdb_fdw;
+11. CREATE SERVER influxdb_server FOREIGN DATA WRAPPER influxdb_fdw OPTIONS(dbname 'test', host 'http://localhost', port '8086');
+12. CREATE USER MAPPING FOR CURRENT_USER SERVER influxdb_server OPTIONS(user 'user', password 'pass');
+13. CREATE FOREIGN TABLE psqltbl(time TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP, name TEXT, money INTEGER) SERVER influxdb_server OPTIONS (table 'psqltbl');
+14. IMPORT FOREIGN SCHEMA public FROM SERVER influxdb_server INTO public;
+
+
+
+～ ディレクトリ構成 ～
+influxdb_fdw
+influxdb_fdw/.git
+influxdb_fdw/.git/refs
+influxdb_fdw/.git/refs/heads
+influxdb_fdw/.git/refs/heads/master
+influxdb_fdw/.git/refs/tags
+influxdb_fdw/.git/refs/remotes
+influxdb_fdw/.git/refs/remotes/origin
+influxdb_fdw/.git/refs/remotes/origin/HEAD
+influxdb_fdw/.git/branches
+influxdb_fdw/.git/description
+influxdb_fdw/.git/hooks
+influxdb_fdw/.git/hooks/applypatch-msg.sample
+influxdb_fdw/.git/hooks/commit-msg.sample
+influxdb_fdw/.git/hooks/post-update.sample
+influxdb_fdw/.git/hooks/pre-applypatch.sample
+influxdb_fdw/.git/hooks/pre-commit.sample
+influxdb_fdw/.git/hooks/pre-push.sample
+influxdb_fdw/.git/hooks/pre-rebase.sample
+influxdb_fdw/.git/hooks/prepare-commit-msg.sample
+influxdb_fdw/.git/hooks/update.sample
+influxdb_fdw/.git/info
+influxdb_fdw/.git/info/exclude
+influxdb_fdw/.git/HEAD
+influxdb_fdw/.git/config
+influxdb_fdw/.git/objects
+influxdb_fdw/.git/objects/pack
+influxdb_fdw/.git/objects/pack/pack-13efad0925abcb8e20ba2f578fea725c673e6dfc.pack
+influxdb_fdw/.git/objects/pack/pack-13efad0925abcb8e20ba2f578fea725c673e6dfc.idx
+influxdb_fdw/.git/objects/info
+influxdb_fdw/.git/packed-refs
+influxdb_fdw/.git/logs
+influxdb_fdw/.git/logs/refs
+influxdb_fdw/.git/logs/refs/remotes
+influxdb_fdw/.git/logs/refs/remotes/origin
+influxdb_fdw/.git/logs/refs/remotes/origin/HEAD
+influxdb_fdw/.git/logs/refs/heads
+influxdb_fdw/.git/logs/refs/heads/master
+influxdb_fdw/.git/logs/HEAD
+influxdb_fdw/.git/index
+influxdb_fdw/.gitignore
+influxdb_fdw/Jenkinsfile
+influxdb_fdw/LICENSE
+influxdb_fdw/Makefile
+influxdb_fdw/README.md
+influxdb_fdw/deparse.c
+influxdb_fdw/expected
+influxdb_fdw/expected/aggregate.out
+influxdb_fdw/expected/extra
+influxdb_fdw/expected/extra/aggregates.out
+influxdb_fdw/expected/extra/influxdb_fdw_post.out
+influxdb_fdw/expected/extra/join.out
+influxdb_fdw/expected/extra/limit.out
+influxdb_fdw/expected/extra/prepare.out
+influxdb_fdw/expected/extra/select.out
+influxdb_fdw/expected/extra/select_having.out
+influxdb_fdw/expected/influxdb_fdw.out
+influxdb_fdw/influxdb_fdw--1.0.sql
+influxdb_fdw/influxdb_fdw.c
+influxdb_fdw/influxdb_fdw.control
+influxdb_fdw/influxdb_fdw.h
+influxdb_fdw/influxdb_query.c
+influxdb_fdw/init.sh
+influxdb_fdw/init.txt
+influxdb_fdw/init
+influxdb_fdw/init/agg.txt
+influxdb_fdw/init/init_post.txt
+influxdb_fdw/init/join.txt
+influxdb_fdw/init/onek.txt
+influxdb_fdw/init/others.txt
+influxdb_fdw/init/person.txt
+influxdb_fdw/init/select.txt
+influxdb_fdw/init/select_having.txt
+influxdb_fdw/init/streets.txt
+influxdb_fdw/init/student.txt
+influxdb_fdw/init/tenk.txt
+influxdb_fdw/init_extra.sh
+influxdb_fdw/option.c
+influxdb_fdw/query.go
+influxdb_fdw/sql
+influxdb_fdw/sql/aggregate.sql
+influxdb_fdw/sql/extra
+influxdb_fdw/sql/extra/aggregates.sql
+influxdb_fdw/sql/extra/influxdb_fdw_post.sql
+influxdb_fdw/sql/extra/init.sql
+influxdb_fdw/sql/extra/join.sql
+influxdb_fdw/sql/extra/limit.sql
+influxdb_fdw/sql/extra/prepare.sql
+influxdb_fdw/sql/extra/select.sql
+influxdb_fdw/sql/extra/select_having.sql
+influxdb_fdw/sql/influxdb_fdw.sql
+influxdb_fdw/sql/init.sql
+influxdb_fdw/test.sh
+influxdb_fdw/test_extra.sh

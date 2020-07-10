@@ -1,0 +1,10 @@
+PostgresFDW手順
+
+1. yum install -y postgresql10-contrib
+2. su - postgres
+3. psql
+4. CREATE EXTENSION postgres_fdw;
+5. CREATE SERVER psql_server2 FOREIGN DATA WRAPPER postgres_fdw OPTIONS(dbname 'test2', host '192.168.11.11', port '5432');
+6. CREATE USER MAPPING FOR CURRENT_USER SERVER psql_server2 OPTIONS(user 'postgres', password 'Psqlpwd01!');
+7. CREATE FOREIGN TABLE student2(id CHAR(4) PRIMARY KEY, name VARCHAR(10), money DECIMAL) SERVER psql_server2 OPTIONS (table_name 'student2');
+8. IMPORT FOREIGN SCHEMA public FROM SERVER psql_server2 INTO public;
