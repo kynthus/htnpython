@@ -1,0 +1,4 @@
+>{"id": "CN001", "name": "おむすび(紅鮭)", "brand": "コシヒカリ", "price": 176, "guzai_id": "GZ002"}
+>{"id": "CN004", "name": "おむすび(塩)", "brand": "あきたこまち", "price": 162, "guzai_id": "GZ001"}
+>{"id": "CN013", "name": "おむすび(五目)", "brand": "コシヒカリ", "price": 176, "guzai_id": "GZ007"}
+>{"id": "CN012", "name": "おむすび(オムライス)", "brand": "あきたこまち", "price": 172, "guzai_id": "GZ008"}
