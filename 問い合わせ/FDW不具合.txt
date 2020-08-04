@@ -1,0 +1,93 @@
+～ InfluxDB側 ～
+
+> SELECT * FROM student;
+name: student
+time                money name
+----                ----- ----
+1596541738431207443 12345 Tom
+1596541743695390354 23456 Ken
+1596541757783056296 33333 Yumi
+1596541765430953804 11111 Mark
+1596541804989062023 18000 Jessica
+
+
+
+
+
+～ PostgreSQL側からFDWで参照 ～
+
+postgres=# SELECT * FROM student;
+             time              |  name   | money
+-------------------------------+---------+-------
+ 2020-08-04 20:48:58.431207+09 | Tom     | 12345
+ 2020-08-04 20:49:03.69539+09  | Ken     | 23456
+ 2020-08-04 20:49:17.783056+09 | Yumi    | 33333
+ 2020-08-04 20:49:25.430954+09 | Mark    | 11111
+ 2020-08-04 20:50:04.989062+09 | Jessica | 18000
+(5 rows)
+
+1個目：InfluxDB FDW fails GROUP BY time
+★これはPostgreSQL 12で新たに出た問題？近日改修見込み？？★
+postgres=# SELECT SUM(money) FROM student GROUP BY time;
+ERROR:  influxdb_fdw : time() is a function and expects at least one argument
+
+
+
+2個目：InfluxDB FDW fails mix usage of aggregate function and arithmetic
+★これはもう直ってる(??)★
+postgres=# SELECT MAX(money) FROM student ORDER BY MAX(money)+1;
+  max
+-------
+ 33333
+(1 row)
+
+
+
+3個目：GROUP BY does not support FIELD KEY having arithmetic.
+！！！こいつはInfluxDBへプッシュダウンしてまんまと嵌まるパターン！！！
+　　　（ただし、エラーの出方が違う？？？）
+postgres=# SELECT money/2, sum(money) * (money/2) FROM student GROUP BY money/2
+ORDER BY money/2;
+ERROR:  influxdb_fdw : only time and tag dimensions allowed
+
+
+
+4個目：GROUP BY only works with time and tag dimensions.
+！！！こっちも！！！
+postgres=# SELECT COUNT(money) w, money x, 5 y, 7.0 z FROM student GROUP BY 2, y, 9.0::INT ORDER BY 2;
+ERROR:  influxdb_fdw : only time and tag dimensions allowed
+
+
+
+5個目：GROUP BY does not work with duplicated targets.
+！！！これに関しては、PostgreSQL 9.6系では動くとのこと！！！
+postgres=# SELECT money, money FROM student WHERE money > 6 GROUP BY 1, 2 ORDER BY SUM(money);
+ERROR:  targetlist item has multiple sortgroupref labels
+
+
+
+6個目：Aggregate functions with arithmetic in parentheses are not supported.
+！！！こちらもPostgreSQL 9.6系では動くらしい！！！
+postgres=# SELECT name, COUNT(money), SUM(DISTINCT money) FROM student GROUP BY name ORDER BY name;
+ERROR:  influxdb_fdw : expected field argument in sum()
+
+
+
+7個目：String comparitions do not work except = and !=.
+？？？これはPostgreSQL 12だけうまくいくタイプ？11以前は無理？？？
+postgres=# SELECT COUNT(*) FROM student WHERE name >= 'x';
+ count
+-------
+     0
+(1 row)
+
+
+
+8個目：compiler error
+？？？原因不明。。。何やらPostgreSQLのディレクトリパスが怪しいのだが……？？？
+
+
+
+9個目：GROUP BY does not work on field keys
+これはまだまだかかる？
+ただ、エラーの出方は変わっているようにも見えるが、まだ駄目なのかな？
