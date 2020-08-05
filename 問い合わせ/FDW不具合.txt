@@ -31,6 +31,20 @@ postgres=# SELECT * FROM student;
 postgres=# SELECT SUM(money) FROM student GROUP BY time;
 ERROR:  influxdb_fdw : time() is a function and expects at least one argument
 
+9.6.18:○
+10.13:×
+11.8:×
+12.3:×
+
+たしかに、9.6.18だと行ける…!
+  sum
+-------
+ 33333
+ 11111
+ 18000
+ 23456
+ 12345
+(5 rows)
 
 
 2個目：InfluxDB FDW fails mix usage of aggregate function and arithmetic
@@ -41,15 +55,33 @@ postgres=# SELECT MAX(money) FROM student ORDER BY MAX(money)+1;
  33333
 (1 row)
 
+9.6.18:○
+10.13:○
+11.8:○
+12.3:○
 
 
 3個目：GROUP BY does not support FIELD KEY having arithmetic.
 ！！！こいつはInfluxDBへプッシュダウンしてまんまと嵌まるパターン！！！
 　　　（ただし、エラーの出方が違う？？？）
-postgres=# SELECT money/2, sum(money) * (money/2) FROM student GROUP BY money/2
-ORDER BY money/2;
+postgres=# SELECT money/2, sum(money) * (money/2) FROM student GROUP BY money/2 ORDER BY money/2;
 ERROR:  influxdb_fdw : only time and tag dimensions allowed
 
+9.6.18:○
+10.13:×
+11.8:×
+12.3:×
+
+これも9.6.18だと行ける
+
+ ?column? | ?column?
+----------+-----------
+     5555 |  61721605
+     6172 |  76193340
+     9000 | 162000000
+    11728 | 275091968
+    16666 | 555527778
+(5 rows)
 
 
 4個目：GROUP BY only works with time and tag dimensions.
@@ -57,6 +89,21 @@ ERROR:  influxdb_fdw : only time and tag dimensions allowed
 postgres=# SELECT COUNT(money) w, money x, 5 y, 7.0 z FROM student GROUP BY 2, y, 9.0::INT ORDER BY 2;
 ERROR:  influxdb_fdw : only time and tag dimensions allowed
 
+9.6.18:○
+10.13:×
+11.8:×
+12.3:×
+
+これも9.6.18だと行ける
+
+ w |   x   | y |  z
+---+-------+---+-----
+ 1 | 11111 | 5 | 7.0
+ 1 | 12345 | 5 | 7.0
+ 1 | 18000 | 5 | 7.0
+ 1 | 23456 | 5 | 7.0
+ 1 | 33333 | 5 | 7.0
+(5 rows)
 
 
 5個目：GROUP BY does not work with duplicated targets.
@@ -64,13 +111,42 @@ ERROR:  influxdb_fdw : only time and tag dimensions allowed
 postgres=# SELECT money, money FROM student WHERE money > 6 GROUP BY 1, 2 ORDER BY SUM(money);
 ERROR:  targetlist item has multiple sortgroupref labels
 
+9.6.18:○
+10.13:×
+11.8:×
+12.3:×
 
+これも9.6.18だと行ける
+
+ money | money
+-------+-------
+ 11111 | 11111
+ 12345 | 12345
+ 18000 | 18000
+ 23456 | 23456
+ 33333 | 33333
+(5 rows)
 
 6個目：Aggregate functions with arithmetic in parentheses are not supported.
 ！！！こちらもPostgreSQL 9.6系では動くらしい！！！
 postgres=# SELECT name, COUNT(money), SUM(DISTINCT money) FROM student GROUP BY name ORDER BY name;
 ERROR:  influxdb_fdw : expected field argument in sum()
 
+9.6.18:○
+10.13:×
+11.8:×
+12.3:×
+
+これも9.6.18だと行ける
+
+  name   | count |  sum
+---------+-------+-------
+ Jessica |     1 | 18000
+ Ken     |     1 | 23456
+ Mark    |     1 | 11111
+ Tom     |     1 | 12345
+ Yumi    |     1 | 33333
+(5 rows)
 
 
 7個目：String comparitions do not work except = and !=.
@@ -81,6 +157,10 @@ postgres=# SELECT COUNT(*) FROM student WHERE name >= 'x';
      0
 (1 row)
 
+9.6.18:○
+10.13:○
+11.8:○
+12.3:○
 
 
 8個目：compiler error
