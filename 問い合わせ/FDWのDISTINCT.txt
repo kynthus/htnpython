@@ -1,0 +1,73 @@
+postgres=# SELECT * FROM student;
+             time              |  name   | money
+-------------------------------+---------+-------
+ 2020-08-05 09:14:30.828683-04 | Tom     | 12345
+ 2020-08-05 09:14:30.838393-04 | Ken     | 23456
+ 2020-08-05 09:14:30.852259-04 | Yumi    | 33333
+ 2020-08-05 09:14:30.866548-04 | Mark    | 11111
+ 2020-08-05 09:14:30.885334-04 | Jessica | 18000
+ 2020-08-12 01:46:48.611703-04 | Jackson | 33333
+ 2020-08-12 01:57:45.921452-04 | Jackson | 18000
+ 2020-08-12 01:57:48.584005-04 | Jackson | 33333
+(8 rows)
+
+
+
+postgres=# SELECT name, SUM(DISTINCT money) FROM student GROUP BY name ORDER BY name;
+  name   |  sum
+---------+-------
+ Jackson | 51333
+ Jessica | 18000
+ Ken     | 23456
+ Mark    | 11111
+ Tom     | 12345
+ Yumi    | 33333
+(6 rows)
+
+
+
+postgres=# SELECT name, SUM(money)
+postgres-# FROM (SELECT DISTINCT name, money FROM student) AS disted
+postgres-# GROUP BY name ORDER BY name;
+  name   |  sum
+---------+-------
+ Jackson | 51333
+ Jessica | 18000
+ Ken     | 23456
+ Mark    | 11111
+ Tom     | 12345
+ Yumi    | 33333
+(6 rows)
+
+
+
+
+
+postgres=# SELECT name, COUNT(money), SUM(DISTINCT money) FROM student GROUP BY name ORDER BY name;
+  name   | count |  sum
+---------+-------+-------
+ Jackson |     3 | 51333
+ Jessica |     1 | 18000
+ Ken     |     1 | 23456
+ Mark    |     1 | 11111
+ Tom     |     1 | 12345
+ Yumi    |     1 | 33333
+(6 rows)
+
+
+
+# これならいけるんでない？
+postgres=# SELECT grouped.name, count, sum
+postgres-# FROM (SELECT name, SUM(money) FROM (SELECT DISTINCT name, money FROM student) 
+postgres-# AS disted GROUP BY name ORDER BY name) AS grouped
+postgres-# INNER JOIN (SELECT name, COUNT(money) FROM student GROUP BY name) AS cnted
+postgres-# ON grouped.name = cnted.name;
+  name   | count |  sum
+---------+-------+-------
+ Jackson |     3 | 51333
+ Jessica |     1 | 18000
+ Ken     |     1 | 23456
+ Mark    |     1 | 11111
+ Tom     |     1 | 12345
+ Yumi    |     1 | 33333
+(6 rows)
