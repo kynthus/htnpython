@@ -1,0 +1,28 @@
+CREATE TABLE weather (
+observation_date DATE,
+max_temperature DOUBLE,
+min_temperature DOUBLE,
+weather_night VARCHAR(256),
+weather_daytime VARCHAR(256),
+wind_velocity DOUBLE,
+snow_cover DOUBLE,
+precipitation DOUBLE
+) ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n'
+tblproperties("skip.header.line.count" = "1");
+
+LOAD DATA INPATH '/user/root/weatherData.csv' INTO TABLE weather;
+
+
+
+CREATE TABLE weather_new (
+observation_date DATE,
+humidity INTEGER,
+sunshine_hours DOUBLE
+) ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n'
+tblproperties("skip.header.line.count" = "1");
+
+LOAD DATA INPATH '/user/root/weatherDataNew.csv' INTO TABLE weather_new;

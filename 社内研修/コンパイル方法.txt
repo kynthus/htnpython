@@ -1,0 +1,9 @@
+～ MapReduce ～
+javac -classpath `hadoop classpath`:. MapReduceTest.java
+jar -cf MapReduceTest.jar *.class
+yarn jar MapReduceTest.jar MapReduceTest words.txt copydir
+
+～ Spark ～
+javac -classpath $SPARK_HOME/jars/*:. SparkTest.java
+jar -cf SparkTest.jar SparkTest.class
+spark-submit --master yarn --deploy-mode client --class SparkTest SparkTest.jar words.txt spcopydir
