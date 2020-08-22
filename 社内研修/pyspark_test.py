@@ -12,7 +12,7 @@ if __name__ == '__main__':
         sys.stderr.writelines('Usage: pyspark_test.py <入力元ファイルパス> <出力先ディレクトリパス>')
         sys.exit(1)
 
-    # SparkSessionの生成し、最終的に必ず停止する
+    # SparkSessionを生成し、最終的に必ず停止する
     with SparkSession.builder.getOrCreate() as spark:  # type: SparkSession
 
         # 生成したSparkSessionより、SparkContextを取得

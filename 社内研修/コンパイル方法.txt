@@ -7,3 +7,6 @@ yarn jar MapReduceTest.jar MapReduceTest words.txt copydir
 javac -classpath $SPARK_HOME/jars/*:. SparkTest.java
 jar -cf SparkTest.jar SparkTest.class
 spark-submit --master yarn --deploy-mode client --class SparkTest SparkTest.jar words.txt spcopydir
+
+～ PySpark ～
+spark-submit --master yarn --deploy-mode client pyspark_test.py words.txt spcopydir
