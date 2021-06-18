@@ -1,0 +1,43 @@
+★全VMを書き出しておく(K8Sもやったよ！)
+★アップロード
+★村上さんにコンタクトをとる
+	・そもそもWindows???
+	・実際に合った時で良いけど、コンピュータリテラシとLinux経験と言語経験（Javaだけかな？）
+・本を買う
+・本を渡すため、持っていく
+・GitLabのアクセストークンとリカバリコードを控える（スマホでいいか。GitHubに上げると危ないし）
+
+
+～ 自社でやること ～
+・まーた16GBマシンを作んなきゃいかんわ
+
+・VirtualBox, TeraTerm, WinSCP, サクラエディタ(入ってる?)
+・「C:\Windows\System32\drivers\etc\hosts」を変えておく
+・Hadoop用のVMを導入する（K8Sも入れとけ）
+・動作確認をしておく
+・で、まっさらにしようね
+
+・あと俺専用PCにGitとIntelliJを入れとく
+	足りないものはcompleteグループから持ってくる
+	まぁSUMMARY書き換えるだけなんだけどね
+
+
+
+～ 研修が始まったら ～
+・GitLabアカウントを展開
+　紙でね。あと口外無用ということも伝える
+　ユーザ名：cscojt
+　パスワード：cscusers
+
+・Webサイトは以下の5種類（最初はLinuxのみアクセス可。つかTalendはやんないかも……）
+	https://yh114020.gitlab.io/practice-of-linux/
+	https://yh114020.gitlab.io/practice-of-python/
+	https://yh114020.gitlab.io/practice-of-hadoop/
+	https://yh114020.gitlab.io/practice-of-talend/
+	https://yh114020.gitlab.io/practice-of-advanced-technology/
+
+	https://yh114020-complete.gitlab.io/practice-of-linux/
+	https://yh114020-complete.gitlab.io/practice-of-python/
+	https://yh114020-complete.gitlab.io/practice-of-hadoop/
+	https://yh114020-complete.gitlab.io/practice-of-talend/
+	https://yh114020-complete.gitlab.io/practice-of-advanced-technology/

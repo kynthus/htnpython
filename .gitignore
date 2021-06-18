@@ -1,0 +1,5 @@
+### IntelliJ IDEA上の除外対象
+.idea/
+.bsp/
+target/
+*.iml
